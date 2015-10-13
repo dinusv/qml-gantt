@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -22,15 +22,11 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("QML Gantt Sample")
 
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
-            MenuItem {
-                text: qsTr("Delete Stuff")
-                onTriggered: ;
-            }
             MenuItem {
                 text: qsTr("Exit")
                 onTriggered: Qt.quit();
@@ -38,14 +34,22 @@ ApplicationWindow {
         }
     }
 
-    Rectangle{
+    GanttEditWindow{
+        id: ganttEditWindow
+    }
 
+    Rectangle{
         id: root
+
+        function editItem(item){
+            ganttEditWindow.ganttItem = item
+            ganttEditWindow.visible   = true
+        }
+
         property int zoomScale : 1
-        property int timelineLength : timelineModel.contentWidth
-        property color elementColor: "#aa0000"
+        property int ganttLength : ganttModel.contentWidth
         property color elementBorderColor: "#aaa"
-        property color elementFocusColor: "#bb0000"
+        property color elementBorderFocusColor: "#fff"
 
         width: parent.width
         anchors.fill: parent
@@ -66,47 +70,50 @@ ApplicationWindow {
 
             RangeView{
                 id : rangeView
-                model: timelineModel
+                model: ganttModel
                 height : root.height
+
+                MouseArea{
+                    anchors.fill: parent
+                    onDoubleClicked: {
+                        var itemPosition = mouse.x - 10 >= 0 ? mouse.x - 10 : 0
+                        if ( itemPosition + 20 >= ganttModel.contentWidth )
+                            itemPosition = ganttModel.contentWidth - 20
+                        ganttModel.insertItem(itemPosition, 20)
+                    }
+                }
 
                 delegate: Component{
 
                     Rectangle{
-                        id: timelineDelegate
+                        id: ganttDelegate
 
                         width: length * root.zoomScale
                         height: rangeView.height
 
                         clip: true
-                        color: root.elementColor
+                        color: modelData.color
 
                         x: position * root.zoomScale
 
                         Keys.onPressed: {
                             if ( event.key === Qt.Key_Delete ){
                                 event.accepted = true
-                                root.model.removeSequence(sequence)
+                                rangeView.removeItemViaDelegate(ganttDelegate)
 
                             } else if ( event.key === Qt.Key_Left ){
 
                                 if ( event.modifiers & Qt.ShiftModifier ){
                                     var newLength = length - 1
                                     if ( newLength > 0){
-                                        length = newLength
-                                        timelineDelegate.width = length * root.zoomScale
+                                        rangeView.setLengthViaDelegate(ganttDelegate, newLength)
+                                        ganttDelegate.width = newLength * root.zoomScale
                                     }
-                                } else if ( event.modifiers & Qt.ControlModifier ){
-                                    var newPosition = root.currentFrame - length
-                                    if ( newPosition < 0 )
-                                        newPosition = 0
-                                    position = newPosition
-                                    timelineDelegate.x = position * root.zoomScale
-
                                 } else {
                                     var newPosition = position - 1
                                     if ( newPosition >= 0 ){
-                                        position = newPosition
-                                        timelineDelegate.x = position * root.zoomScale
+                                        rangeView.setPositionViaDelegate(ganttDelegate, newPosition)
+                                        ganttDelegate.x = newPosition * root.zoomScale
                                     }
                                 }
                                 event.accepted = true
@@ -115,28 +122,17 @@ ApplicationWindow {
 
                                 if ( event.modifiers & Qt.ShiftModifier ){
                                     var newLength = length + 1
-                                    if ( position + length < root.videoLength ){
-                                        length = newLength
-                                        timelineDelegate.width = length * root.zoomScale
+                                    if ( position + length < ganttModel.contentWidth ){
+                                        rangeView.setLengthViaDelegate(ganttDelegate, newLength)
+                                        ganttDelegate.width = newLength * root.zoomScale
                                     }
-                                } else if ( event.modifiers & Qt.ControlModifier ){
-
-                                    var newPosition = root.currentFrame
-                                    if ( newPosition + length > root.videoLength )
-                                        newPosition = root.videoLength - length
-                                    position = newPosition
-                                    timelineDelegate.x = position * root.zoomScale
-
                                 } else {
                                     var newPosition = position + 1
-                                    if ( position + length < root.videoLength ){
-                                        position = newPosition
-                                        timelineDelegate.x = position * root.zoomScale
+                                    if ( position + length < ganttModel.contentWidth ){
+                                        rangeView.setPositionViaDelegate(ganttDelegate, newPosition)
+                                        ganttDelegate.x = newPosition * root.zoomScale
                                     }
                                 }
-
-                                position = Math.round(timelineDelegate.x / root.zoomScale)
-                                timelineDelegate.x = position * root.zoomScale
 
                                 event.accepted = true
                             }
@@ -148,7 +144,7 @@ ApplicationWindow {
                             anchors.top: parent.top
                             width : 2
                             height : parent.height
-                            color: timelineDelegate.activeFocus ? "#666" : root.elementBorderColor
+                            color: ganttDelegate.activeFocus ? root.elementBorderFocusColor : root.elementBorderColor
 
                             MouseArea{
                                 anchors.fill: parent
@@ -161,30 +157,30 @@ ApplicationWindow {
                                 }
                                 onPositionChanged: {
                                     if ( pressed ){
-                                        var newWidth  = timelineDelegate.width + oldMouseX - mouseX
-                                        var newX      = timelineDelegate.x + mouseX - oldMouseX
+                                        var newWidth  = ganttDelegate.width + oldMouseX - mouseX
+                                        var newX      = ganttDelegate.x + mouseX - oldMouseX
                                         var newLength = Math.round(newWidth / root.zoomScale)
                                         if ( newLength > 0 && newX + newWidth < rangeView.width ){
                                             if ( newX > 0 ){
-                                                timelineDelegate.width = newWidth
-                                                timelineDelegate.x     = newX
+                                                ganttDelegate.width = newWidth
+                                                ganttDelegate.x     = newX
                                             } else {
-                                                timelineDelegate.width = timelineDelegate.x + timelineDelegate.width
-                                                timelineDelegate.x     = 0
+                                                ganttDelegate.width = ganttDelegate.x + ganttDelegate.width
+                                                ganttDelegate.x     = 0
                                             }
                                         } else {
-                                            timelineDelegate.x     =
-                                                    timelineDelegate.x + timelineDelegate.width - (1 * root.zoomScale)
-                                            timelineDelegate.width = 1 * root.zoomScale
+                                            ganttDelegate.x     =
+                                                    ganttDelegate.x + ganttDelegate.width - (1 * root.zoomScale)
+                                            ganttDelegate.width = 1 * root.zoomScale
                                         }
                                     }
                                 }
 
                                 onReleased: {
-                                    rangeView.setItemLength(timelineDelegate, Math.round(timelineDelegate.width / root.zoomScale))
-                                    rangeView.setItemPosition(timelineDelegate, Math.round(timelineDelegate.x / root.zoomScale))
-                                    timelineDelegate.width = length * root.zoomScale
-                                    timelineDelegate.x     = position * root.zoomScale
+                                    rangeView.setLengthViaDelegate(ganttDelegate, Math.round(ganttDelegate.width / root.zoomScale))
+                                    rangeView.setPositionViaDelegate(ganttDelegate, Math.round(ganttDelegate.x / root.zoomScale))
+                                    ganttDelegate.width = length * root.zoomScale
+                                    ganttDelegate.x     = position * root.zoomScale
                                 }
                             }
                         }
@@ -196,16 +192,16 @@ ApplicationWindow {
                             anchors.rightMargin: 2
                             width : parent.width
                             height : parent.height
-                            color : timelineDelegate.activeFocus ? root.elementFocusColor : parent.color
+                            color : parent.color
                             MouseArea{
                                 anchors.fill: parent
                                 cursorShape: Qt.SizeAllCursor
-                                drag.target: timelineDelegate
+                                drag.target: ganttDelegate
                                 drag.axis: Drag.XAxis
                                 drag.minimumX: 0
-                                drag.maximumX: rangeView.width - timelineDelegate.width
+                                drag.maximumX: rangeView.width - ganttDelegate.width
                                 onPressed: {
-                                    timelineDelegate.forceActiveFocus()
+                                    ganttDelegate.forceActiveFocus()
                                 }
                                 onDoubleClicked: {
                                     if ( mouse.modifiers & Qt.ControlModifier ){
@@ -214,21 +210,21 @@ ApplicationWindow {
                                         if ( Math.abs(rightDistance) > Math.abs(leftDistance) ){
                                             length -= leftDistance
                                             position += leftDistance
-                                            timelineDelegate.width = length * root.zoomScale
-                                            timelineDelegate.x     = position * root.zoomScale
+                                            ganttDelegate.width = length * root.zoomScale
+                                            ganttDelegate.x     = position * root.zoomScale
                                         } else {
                                             length += rightDistance
                                             if ( length < 1 )
                                                 length = 1
-                                            timelineDelegate.width = length * root.zoomScale
+                                            ganttDelegate.width = length * root.zoomScale
                                         }
                                     } else {
-                                        root.sequenceEdit(sequence)
+                                        root.editItem(modelData)
                                     }
                                 }
                                 onReleased :{
-                                    rangeView.setItemPosition(timelineDelegate, Math.round(timelineDelegate.x / root.zoomScale))
-                                    timelineDelegate.x = position * root.zoomScale
+                                    rangeView.setPositionViaDelegate(ganttDelegate, Math.round(ganttDelegate.x / root.zoomScale))
+                                    ganttDelegate.x = position * root.zoomScale
                                 }
                             }
                         }
@@ -238,7 +234,7 @@ ApplicationWindow {
                             anchors.top: parent.top
                             width : 2
                             height : parent.height
-                            color: timelineDelegate.activeFocus ? "#666" : root.elementBorderColor
+                            color: ganttDelegate.activeFocus ? root.elementBorderFocusColor : root.elementBorderColor
 
                             MouseArea{
                                 anchors.fill: parent
@@ -249,24 +245,33 @@ ApplicationWindow {
                                 onPressed: oldMouseX = mouseX
                                 onPositionChanged: {
                                     if ( pressed ){
-                                        var newWidth  = timelineDelegate.width + (mouseX - oldMouseX)
+                                        var newWidth  = ganttDelegate.width + (mouseX - oldMouseX)
                                         var newLength = Math.round(newWidth / root.zoomScale)
                                         if ( newLength > 0 ){
-                                            if ( position + newLength < root.timelineLength)
-                                                timelineDelegate.width = newWidth
+                                            if ( position + newLength < root.ganttLength)
+                                                ganttDelegate.width = newWidth
                                             else
-                                                timelineDelegate.width = (root.timelineLength - position) * root.zoomScale
+                                                ganttDelegate.width = (root.ganttLength - position) * root.zoomScale
                                         } else
-                                            timelineDelegate.width = 1 * root.zoomScale
+                                            ganttDelegate.width = 1 * root.zoomScale
                                     }
                                 }
                                 onReleased: {
-                                    rangeView.setItemLength(timelineDelegate, Math.round(timelineDelegate.width / root.zoomScale))
-                                    timelineDelegate.width = length * root.zoomScale
+                                    rangeView.setLengthViaDelegate(ganttDelegate, Math.round(ganttDelegate.width / root.zoomScale))
+                                    ganttDelegate.width = length * root.zoomScale
                                 }
                             }
                         }
-                }
+
+                        Text{
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
+                            color: "#fff"
+                            text: modelData.label
+                            font.family: "sans-serif"
+                            font.pixelSize: 10
+                        }
+                    }
 
                 }
             }

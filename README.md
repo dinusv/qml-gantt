@@ -1,7 +1,8 @@
 # QML Gantt library
  
 An efficient implementation of a gantt chart library for qml. The library provides a custom View element
-which handles lazy loading of items according to its viewport. Items are loaded from a model which can easily be implemented according to custom specifications.
+which handles lazy loading of items according to its viewport. Items are loaded from a model which can 
+easily be implemented according to custom specifications.
 
  * **Version**: 0.1.0
  * **License**: LPGL
@@ -13,7 +14,7 @@ The sample associated provides an editable gantt chart element like below:
 
 ## Usage
 
-The project can be used as an externally linked library or by including the source files directly. (The first version would be the preferred one).
+The project can be used as an externally linked library or by including the source files directly. (The first option would be the preferred one).
 
 ### Compiling and linking to the library
 

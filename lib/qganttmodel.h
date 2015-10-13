@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -57,6 +57,8 @@ class Q_GANTT_EXPORT QGanttModel : public QAbstractRangeModel{
     Q_OBJECT
 
 public:
+    typedef QVariant (*ItemDataFactoryFunction)();
+
     enum Role{
         modelData = QAbstractRangeModel::LengthRole + 1
     };
@@ -74,6 +76,8 @@ public:
     QHash<int, QByteArray> roleNames() const;
 
     int insertItem(QGanttModelItem* item);
+
+    void setItemDataFactoryFunction(ItemDataFactoryFunction fp);
 
 public slots:
     void insertItem(qint64 position, qint64 length);

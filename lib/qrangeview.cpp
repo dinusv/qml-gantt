@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -326,7 +326,7 @@ void QRangeView::modelItemsChanged(qint64 beginPosition, qint64 endPosition){
     delete modelIt;
 }
 
-void QRangeView::setItemPosition(QQuickItem* item, qint64 position){
+void QRangeView::setPositionViaDelegate(QQuickItem* item, qint64 position){
     Q_D(QRangeView);
     int index = d->findItemByDelegate(item);
     if ( index == d->items.size() ){
@@ -343,7 +343,7 @@ void QRangeView::setItemPosition(QQuickItem* item, qint64 position){
     d->model->setItemPosition(rangeItem->position, rangeItem->length, relativeIndex, position);
 }
 
-void QRangeView::setItemLength(QQuickItem* item, qint64 newLength){
+void QRangeView::setLengthViaDelegate(QQuickItem* item, qint64 newLength){
     Q_D(QRangeView);
     int index = d->findItemByDelegate(item);
     if ( index == d->items.size() ){
@@ -361,7 +361,7 @@ void QRangeView::setItemLength(QQuickItem* item, qint64 newLength){
 
 }
 
-void QRangeView::setItemData(QQuickItem* item, const QString& role, const QVariant& value){
+void QRangeView::setDataViaDelegate(QQuickItem* item, const QString& role, const QVariant& value){
     Q_D(QRangeView);
     int index = d->findItemByDelegate(item);
     if ( index == d->items.size() ){
@@ -378,7 +378,21 @@ void QRangeView::setItemData(QQuickItem* item, const QString& role, const QVaria
         relativeIndex,
         d->modelRoles.key(role.toLatin1()),
         value
-    );
+                );
+}
+
+void QRangeView::removeItemViaDelegate(QQuickItem *item){
+    Q_D(QRangeView);
+    int index = d->findItemByDelegate(item);
+    if ( index == d->items.size() ){
+        qWarning("Cannot find item by its position: %lld.", static_cast<qint64>(item->x()));
+        return;
+    }
+
+    QRangeViewItem* rangeItem = d->items[index];
+    int relativeIndex = d->findRelativeIndex(index);
+
+    d->model->removeItem(rangeItem->position, rangeItem->length, relativeIndex);
 }
 
 void QRangeView::componentComplete(){

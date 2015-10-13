@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -63,9 +63,10 @@ public slots:
     void modelItemsAboutToBeChanged(qint64 beginPosition, qint64 endPosition);
     void modelItemsChanged(qint64 beginPosition, qint64 endPosition);
 
-    void setItemPosition(QQuickItem* item, qint64 position);
-    void setItemLength(QQuickItem* item, qint64 length);
-    void setItemData(QQuickItem* item, const QString& role, const QVariant& value);
+    void setPositionViaDelegate(QQuickItem* delegate, qint64 position);
+    void setLengthViaDelegate(QQuickItem* delegate, qint64 length);
+    void setDataViaDelegate(QQuickItem* delegate, const QString& role, const QVariant& value);
+    void removeItemViaDelegate(QQuickItem* delegate);
 
 protected:
     void componentComplete();

@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -18,30 +18,39 @@
 #include "qganttmodelitem.h"
 #include <QVariant>
 
-// QTimelineModelPrivate
+// QGanttModelPrivate
 // ----------------------------------------------------------------------------
 
 class QGanttModelPrivate{
 public:
-    QGanttModelPrivate() : lastChange(0){}
+    QGanttModelPrivate() : lastChange(0), itemDataFactory(0){}
+    ~QGanttModelPrivate();
 
-    class QTimelineModelChange{
+    class QGanttModelChange{
     public:
         qint64 startPosition;
         qint64 endPosition;
     };
 
     QList<QGanttModelItem*> items;
-    QTimelineModelChange* lastChange;
+    QGanttModelChange* lastChange;
+    QGanttModelChange* change(qint64 startPosition, qint64 endPosition);
 
-    QTimelineModelChange* change(qint64 startPosition, qint64 endPosition);
+    QGanttModel::ItemDataFactoryFunction itemDataFactory;
 
     int searchFirstIndex(qint64 position);
     int searchFirstIndex(qint64 position, qint64 length);
 };
 
-QGanttModelPrivate::QTimelineModelChange* QGanttModelPrivate::change(qint64 startPosition, qint64 endPosition){
-    QTimelineModelChange* change = new QTimelineModelChange;
+QGanttModelPrivate::~QGanttModelPrivate(){
+    for (QList<QGanttModelItem*>::iterator it = items.begin(); it != items.end(); ++it ){
+        delete *it;
+    }
+    items.clear();
+}
+
+QGanttModelPrivate::QGanttModelChange* QGanttModelPrivate::change(qint64 startPosition, qint64 endPosition){
+    QGanttModelChange* change = new QGanttModelChange;
     change->startPosition = startPosition;
     change->endPosition   = endPosition;
     return change;
@@ -83,7 +92,7 @@ int QGanttModelPrivate::searchFirstIndex(qint64 position, qint64 length){
     return items.size();
 }
 
-// QTimelineModel
+// QGanttModel
 // ----------------------------------------------------------------------------
 
 QGanttModel::QGanttModel(QObject *parent)
@@ -221,9 +230,19 @@ int QGanttModel::insertItem(QGanttModelItem* item){
     return index;
 }
 
+void QGanttModel::setItemDataFactoryFunction(QGanttModel::ItemDataFactoryFunction fp){
+    Q_D(QGanttModel);
+    d->itemDataFactory = fp;
+}
+
 void QGanttModel::insertItem(qint64 position, qint64 length){
+    Q_D(QGanttModel);
+    QGanttModelItem* item = new QGanttModelItem(position, length);
+    if ( d->itemDataFactory )
+        item->setData(d->itemDataFactory());
+
     beginDataChange(position, position + 1);
-    insertItem(new QGanttModelItem(position, length));
+    insertItem(item);
     endDataChange();
 }
 

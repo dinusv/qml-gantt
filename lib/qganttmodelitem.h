@@ -2,10 +2,10 @@
 **
 ** Copyright (C) 2015 Dinu SV.
 ** (contact: mail@dinusv.com)
-** This file is part of QML Gantt Timeline library.
+** This file is part of QML Gantt library.
 **
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
+** This file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPLv3 included in the
 ** packaging of this file. Please review the following information to
@@ -19,13 +19,14 @@
 
 #include "qganttglobal.h"
 #include <QObject>
+#include <QVariant>
 
 class Q_GANTT_EXPORT QGanttModelItem : public QObject{
 
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_PROPERTY(qint64 length   READ length   NOTIFY lengthChanged)
-    Q_PROPERTY(QString data    READ data     NOTIFY dataChanged)
+    Q_PROPERTY(QVariant data   READ data     NOTIFY dataChanged)
 
 public:
     explicit QGanttModelItem(QObject *parent = 0);
@@ -34,11 +35,11 @@ public:
 
     qint64 position() const;
     qint64 length() const;
-    const QString& data() const;
+    const QVariant& data() const;
 
     void setPosition(qint64 arg);
     void setLength(qint64 arg);
-    void setData(const QString& data);
+    void setData(const QVariant& data);
 
 signals:
     void positionChanged();
@@ -46,9 +47,9 @@ signals:
     void dataChanged();
 
 private:
-    qint64  m_position;
-    qint64  m_length;
-    QString m_data;
+    qint64   m_position;
+    qint64   m_length;
+    QVariant m_data;
 };
 
 inline qint64 QGanttModelItem::position() const{
@@ -75,11 +76,11 @@ inline void QGanttModelItem::setLength(qint64 arg){
     emit lengthChanged();
 }
 
-inline const QString&QGanttModelItem::data() const{
+inline const QVariant& QGanttModelItem::data() const{
     return m_data;
 }
 
-inline void QGanttModelItem::setData(const QString& data){
+inline void QGanttModelItem::setData(const QVariant &data){
     if ( data != m_data ){
         m_data = data;
         emit dataChanged();
