@@ -16,11 +16,13 @@ else:unix: LIBS += -L$$OUT_PWD/../build/ -lqmlgantt
 HEADERS += \
     qtestrunner.h \
     qganttmodeltest.h \
-    qrangeviewtest.h
+    qrangeviewtest.h \
+    qviewportbenchmarktest.h
 
 SOURCES += \
     main.cpp \
     qtestrunner.cpp \
     qganttmodeltest.cpp \
-    qrangeviewtest.cpp
+    qrangeviewtest.cpp \
+    qviewportbenchmarktest.cpp
 
