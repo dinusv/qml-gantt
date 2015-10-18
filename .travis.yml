@@ -1,9 +1,9 @@
 language: cpp
 
 before_install:
-    - sudo add-apt-repository ppa:beineri/opt-qt511 -y
+    - sudo add-apt-repository ppa:beineri/opt-qt53 -y
     - sudo apt-get update -qq
-    - sudo apt-get install -qq qt51-qmake qtbase51-dev qtdeclarative51-dev libqt5webkit51-dev
+    - sudo apt-get install -qq qt53-qmake qtbase53-dev qtdeclarative53-dev libqt5webkit53-dev
 script:
     - qmake -qt=qt5 -v
     - qmake -qt=qt5
