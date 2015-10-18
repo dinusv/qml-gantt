@@ -9,3 +9,6 @@ script:
     - qmake -v
     - qmake -r
     - make
+	- ls
+	- ls build
+	- ls lib
