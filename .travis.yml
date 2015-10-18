@@ -1,7 +1,7 @@
 language: cpp
 
 before_install:
-    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+    - sudo add-apt-repository ppa:beineri/opt-qt511 -y
     - sudo apt-get update -qq
     - sudo apt-get install -qq qt51-qmake qtbase51-dev qtdeclarative51-dev libqt5webkit51-dev
 script:
