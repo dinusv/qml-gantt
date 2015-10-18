@@ -41,6 +41,7 @@ private slots:
     void modelItemChangeTest();
     void modelItemPositionChangeTest();
     void modelItemLengthChangeTest();
+    void modelItemDataChangeTest();
 
 private:
     QQmlEngine*    m_engine;
@@ -50,6 +51,7 @@ private:
 
 private:
     QRangeView* createView();
+    QVariant    getModelData(QRangeView* view, qint64 startPos, qint64 endPos, int role);
 };
 
 #endif // QRANGEVIEWTEST_H

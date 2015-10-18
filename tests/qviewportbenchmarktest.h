@@ -37,7 +37,6 @@ public:
 
 private slots:
     void initTestCase();
-
     void minimalDelegateInsertionTest();
     void minimalDelegateViewTest();
     void complexDelegateInsertionTest();
