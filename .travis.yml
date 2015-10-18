@@ -3,7 +3,7 @@ language: cpp
 before_install:
     - sudo add-apt-repository ppa:beineri/opt-qt532 -y
     - sudo apt-get update -qq
-    - sudo apt-get install -qq qt53-qmake qtbase53-dev qtdeclarative53-dev libqt5webkit53-dev
+    - sudo apt-get install -qq qtbase53 qtdeclarative53 qt53quick1 qt53quickcontrols
 script:
     - qmake -qt=qt5 -v
     - qmake -qt=qt5
