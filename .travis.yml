@@ -7,6 +7,5 @@ before_install:
 script:
     - source /opt/qt53/bin/qt53-env.sh
     - qmake -v
-    - qmake -qt=qt5 -v
-    - qmake -qt=qt5
+    - qmake -r
     - make
