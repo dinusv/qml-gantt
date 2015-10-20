@@ -22,7 +22,7 @@ Window{
     signal canceled()
 
     Rectangle{
-        color: "#333"
+        color: "#ddd"
         anchors.fill: parent
         focus: true
 
@@ -47,10 +47,10 @@ Window{
             font.pixelSize: 12
             font.family: "Courier New"
             style: TextAreaStyle {
-                textColor: "#ccc"
+                textColor: "#333"
                 selectionColor: "#eee"
                 selectedTextColor: "#333"
-                backgroundColor: "#3c3c3c"
+                backgroundColor: "#bbb"
             }
         }
 
@@ -69,10 +69,10 @@ Window{
             font.pixelSize: 12
             font.family: "Courier New"
             style: TextAreaStyle {
-                textColor: "#ccc"
+                textColor: "#333"
                 selectionColor: "#eee"
                 selectedTextColor: "#333"
-                backgroundColor: "#3c3c3c"
+                backgroundColor: "#bbb"
             }
         }
 
@@ -82,13 +82,13 @@ Window{
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
-            color: createButtonArea.containsMouse ? "#222240" : "#222230"
+            color: createButtonArea.containsMouse ? "#334499" : "#334488"
             width: 100
             height: 30
             Text{
                 anchors.centerIn: parent
                 text: "Update"
-                color: "#ccc"
+                color: "#fff"
                 font.pixelSize: 12
                 font.family: "Arial, Helvetica, sans-serif"
             }
@@ -116,13 +116,13 @@ Window{
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
-            color: cancelButtonArea.containsMouse ? "#402222" : "#302222"
+            color: cancelButtonArea.containsMouse ? "#b14433" : "#aa4433"
             width: 100
             height: 30
             Text{
                 anchors.centerIn: parent
                 text: "Cancel"
-                color: "#ccc"
+                color: "#fff"
                 font.pixelSize: 12
                 font.family: "Arial, Helvetica, sans-serif"
             }
