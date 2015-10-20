@@ -34,247 +34,166 @@ ApplicationWindow {
         }
     }
 
-    GanttEditWindow{
-        id: ganttEditWindow
+    Rectangle{
+        height: parent.height - 14
+        clip: true
+        width: 150
+
+        ListView{
+            id: ganttNameView
+
+            anchors.fill: parent
+
+            interactive: false
+            contentY: ganttView.contentY
+
+            model: ganttModelList
+            delegate: Rectangle{
+                width: parent.width
+                height: 40
+                Rectangle{
+                    color: "#ccc"
+                    width: parent.width
+                    height: 38
+                    Text{
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        text: name
+                        font.family: "Arial, Helvetica, open-sans"
+                        font.pixelSize: 13
+                        color: "#000"
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onDoubleClicked: {
+                            trackEditBox.visible = true
+                            trackEdit.selectAll()
+                            trackEdit.forceActiveFocus()
+                        }
+                    }
+                    Rectangle{
+                        id: trackEditBox
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.fill: parent
+                        anchors.margins: 5
+                        visible: false
+                        color: "#aaa"
+                        border.color: "#6666cc"
+                        border.width: 1
+                        TextInput{
+                            id: trackEdit
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
+                            width: parent.width - 10
+                            text: name
+                            color: "#000"
+                            font.pixelSize: 13
+                            font.bold: false
+                            font.family: "Arial, Helvetica, sans-serif"
+                            selectByMouse: true
+                            selectionColor: "#444499"
+                            onActiveFocusChanged: {
+                                if ( !activeFocus ){
+                                    name = text
+                                    trackEditBox.visible = false
+                                }
+                            }
+                            Keys.onReturnPressed: {
+                                name = text
+                                event.accepted = true
+                                trackEditBox.visible = false
+                            }
+                            Keys.onEnterPressed: {
+                                name = text
+                                event.accepted = true
+                                trackEditBox.visible = false
+                            }
+
+                            Keys.onEscapePressed: {
+                                text = name
+                                event.accepted = true
+                                trackEditBox.visible = false
+                            }
+                            MouseArea{
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.IBeamCursor
+                            }
+                        }
+                    }
+                }
+            }
+
+            MouseArea{
+                anchors.fill: parent
+                onWheel: {
+                    wheel.accepted = true
+                    var newContentY = ganttView.contentY -= wheel.angleDelta.y / 6
+                    if ( newContentY > ganttView.contentHeight - ganttView.height )
+                        ganttView.contentY = ganttView.contentHeight - ganttView.height
+                    else if ( newContentY < 0 )
+                        ganttView.contentY = 0
+                    else
+                        ganttView.contentY = newContentY
+                }
+                onClicked: mouse.accepted = false;
+                onPressed: mouse.accepted = false;
+                onReleased: mouse.accepted = false
+                onDoubleClicked: mouse.accepted = false;
+                onPositionChanged: mouse.accepted = false;
+                onPressAndHold: mouse.accepted = false;
+            }
+        }
     }
 
     Rectangle{
-        id: root
-
-        function editItem(item){
-            ganttEditWindow.ganttItem = item
-            ganttEditWindow.visible   = true
-        }
-
-        property int zoomScale : 1
-        property int ganttLength : ganttModel.contentWidth
-        property color elementBorderColor: "#aaa"
-        property color elementBorderFocusColor: "#fff"
-
-        width: parent.width
-        anchors.fill: parent
-        color: "#333"
-
-        Text{
-            text: rangeView.viewportX
-            color: "#ff00ff"
-        }
+        height: parent.height
+        width: parent.width - 152
+        x: 152
 
         ScrollView{
-            id : scrollView
-            height: parent.height
-            width: parent.width
+            id: mainScroll
+            anchors.fill: parent
 
-            flickableItem.onContentXChanged: rangeView.viewportX = flickableItem.contentX
-            flickableItem.onWidthChanged: rangeView.viewportWidth = flickableItem.width
+            ListView{
+                id: ganttView
 
-            RangeView{
-                id : rangeView
-                model: ganttModel
-                height : root.height
-
-                MouseArea{
-                    anchors.fill: parent
-                    onDoubleClicked: {
-                        var itemPosition = mouse.x - 10 >= 0 ? mouse.x - 10 : 0
-                        if ( itemPosition + 20 >= ganttModel.contentWidth )
-                            itemPosition = ganttModel.contentWidth - 20
-                        ganttModel.insertItem(itemPosition, 20)
-                    }
-                }
-
-                delegate: Component{
+                height: parent.height
+                contentWidth:  20000
+                model: ganttModelList
+                delegate: Rectangle{
+                    height: 40
+                    width: ganttLine.width
+                    color: "#fff"
 
                     Rectangle{
-                        id: ganttDelegate
+                        height: 38
+                        width: ganttLine.width
+                        color: "#ccc"
+                        GanttLine{
+                            id: ganttLine
+                            color: "#ccc"
+                            height: 24
+                            anchors.centerIn: parent
 
-                        width: length * root.zoomScale
-                        height: rangeView.height
-
-                        clip: true
-                        color: modelData.color
-
-                        x: position * root.zoomScale
-
-                        Keys.onPressed: {
-                            if ( event.key === Qt.Key_Delete ){
-                                event.accepted = true
-                                rangeView.removeItemViaDelegate(ganttDelegate)
-
-                            } else if ( event.key === Qt.Key_Left ){
-
-                                if ( event.modifiers & Qt.ShiftModifier ){
-                                    var newLength = length - 1
-                                    if ( newLength > 0){
-                                        rangeView.setLengthViaDelegate(ganttDelegate, newLength)
-                                        ganttDelegate.width = newLength * root.zoomScale
-                                    }
-                                } else {
-                                    var newPosition = position - 1
-                                    if ( newPosition >= 0 ){
-                                        rangeView.setPositionViaDelegate(ganttDelegate, newPosition)
-                                        ganttDelegate.x = newPosition * root.zoomScale
-                                    }
-                                }
-                                event.accepted = true
-
-                            } else if ( event.key === Qt.Key_Right ){
-
-                                if ( event.modifiers & Qt.ShiftModifier ){
-                                    var newLength = length + 1
-                                    if ( position + length < ganttModel.contentWidth ){
-                                        rangeView.setLengthViaDelegate(ganttDelegate, newLength)
-                                        ganttDelegate.width = newLength * root.zoomScale
-                                    }
-                                } else {
-                                    var newPosition = position + 1
-                                    if ( position + length < ganttModel.contentWidth ){
-                                        rangeView.setPositionViaDelegate(ganttDelegate, newPosition)
-                                        ganttDelegate.x = newPosition * root.zoomScale
-                                    }
-                                }
-
-                                event.accepted = true
+                            viewportX: ganttView.contentX
+                            viewportWidth: ganttView.width
+                            model: ganttModel
+                            onEditItem: {
+                                ganttEditWindow.ganttItem = item
+                                ganttEditWindow.visible = true
                             }
-                        }
-
-                        Rectangle{
-                            id: stretchLeft
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            width : 2
-                            height : parent.height
-                            color: ganttDelegate.activeFocus ? root.elementBorderFocusColor : root.elementBorderColor
-
-                            MouseArea{
-                                anchors.fill: parent
-                                cursorShape: Qt.SizeHorCursor
-
-                                property int oldMouseX
-
-                                onPressed: {
-                                    oldMouseX = mouseX
-                                }
-                                onPositionChanged: {
-                                    if ( pressed ){
-                                        var newWidth  = ganttDelegate.width + oldMouseX - mouseX
-                                        var newX      = ganttDelegate.x + mouseX - oldMouseX
-                                        var newLength = Math.round(newWidth / root.zoomScale)
-                                        if ( newLength > 0 && newX + newWidth < rangeView.width ){
-                                            if ( newX > 0 ){
-                                                ganttDelegate.width = newWidth
-                                                ganttDelegate.x     = newX
-                                            } else {
-                                                ganttDelegate.width = ganttDelegate.x + ganttDelegate.width
-                                                ganttDelegate.x     = 0
-                                            }
-                                        } else {
-                                            ganttDelegate.x     =
-                                                    ganttDelegate.x + ganttDelegate.width - (1 * root.zoomScale)
-                                            ganttDelegate.width = 1 * root.zoomScale
-                                        }
-                                    }
-                                }
-
-                                onReleased: {
-                                    rangeView.setLengthViaDelegate(ganttDelegate, Math.round(ganttDelegate.width / root.zoomScale))
-                                    rangeView.setPositionViaDelegate(ganttDelegate, Math.round(ganttDelegate.x / root.zoomScale))
-                                    ganttDelegate.width = length * root.zoomScale
-                                    ganttDelegate.x     = position * root.zoomScale
-                                }
-                            }
-                        }
-                        Rectangle{
-                            id: centerMove
-                            anchors.left: parent.left
-                            anchors.leftMargin: 2
-                            anchors.right: parent.right
-                            anchors.rightMargin: 2
-                            width : parent.width
-                            height : parent.height
-                            color : parent.color
-                            MouseArea{
-                                anchors.fill: parent
-                                cursorShape: Qt.SizeAllCursor
-                                drag.target: ganttDelegate
-                                drag.axis: Drag.XAxis
-                                drag.minimumX: 0
-                                drag.maximumX: rangeView.width - ganttDelegate.width
-                                onPressed: {
-                                    ganttDelegate.forceActiveFocus()
-                                }
-                                onDoubleClicked: {
-                                    if ( mouse.modifiers & Qt.ControlModifier ){
-                                        var leftDistance = root.currentFrame - position
-                                        var rightDistance = root.currentFrame - (position + length)
-                                        if ( Math.abs(rightDistance) > Math.abs(leftDistance) ){
-                                            length -= leftDistance
-                                            position += leftDistance
-                                            ganttDelegate.width = length * root.zoomScale
-                                            ganttDelegate.x     = position * root.zoomScale
-                                        } else {
-                                            length += rightDistance
-                                            if ( length < 1 )
-                                                length = 1
-                                            ganttDelegate.width = length * root.zoomScale
-                                        }
-                                    } else {
-                                        root.editItem(modelData)
-                                    }
-                                }
-                                onReleased :{
-                                    rangeView.setPositionViaDelegate(ganttDelegate, Math.round(ganttDelegate.x / root.zoomScale))
-                                    ganttDelegate.x = position * root.zoomScale
-                                }
-                            }
-                        }
-                        Rectangle{
-                            id: strechRight
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            width : 2
-                            height : parent.height
-                            color: ganttDelegate.activeFocus ? root.elementBorderFocusColor : root.elementBorderColor
-
-                            MouseArea{
-                                anchors.fill: parent
-                                cursorShape: Qt.SizeHorCursor
-
-                                property int oldMouseX
-
-                                onPressed: oldMouseX = mouseX
-                                onPositionChanged: {
-                                    if ( pressed ){
-                                        var newWidth  = ganttDelegate.width + (mouseX - oldMouseX)
-                                        var newLength = Math.round(newWidth / root.zoomScale)
-                                        if ( newLength > 0 ){
-                                            if ( position + newLength < root.ganttLength)
-                                                ganttDelegate.width = newWidth
-                                            else
-                                                ganttDelegate.width = (root.ganttLength - position) * root.zoomScale
-                                        } else
-                                            ganttDelegate.width = 1 * root.zoomScale
-                                    }
-                                }
-                                onReleased: {
-                                    rangeView.setLengthViaDelegate(ganttDelegate, Math.round(ganttDelegate.width / root.zoomScale))
-                                    ganttDelegate.width = length * root.zoomScale
-                                }
-                            }
-                        }
-
-                        Text{
-                            anchors.left: parent.left
-                            anchors.leftMargin: 5
-                            color: "#fff"
-                            text: modelData.label
-                            font.family: "sans-serif"
-                            font.pixelSize: 10
                         }
                     }
-
                 }
             }
         }
+    }
+
+
+    GanttEditWindow{
+        id: ganttEditWindow
     }
 }

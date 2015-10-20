@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>GanttEditWindow.qml</file>
+        <file>GanttLine.qml</file>
     </qresource>
 </RCC>

@@ -21,6 +21,7 @@
 #include "qrangeview.h"
 #include "qganttmodel.h"
 #include "qganttmodelitem.h"
+#include "qganttmodellist.h"
 #include "qganttdata.h"
 
 QVariant createModelData(){
@@ -37,18 +38,24 @@ int main(int argc, char *argv[])
     qmlRegisterType<QGanttModel>(    "Gantt", 1, 0, "GanttModel");
     qmlRegisterType<QGanttModelItem>("Gantt", 1, 0, "GanttModelItem");
     qmlRegisterType<QGanttData>(     "Gantt", 1, 0, "GanttData");
+    qmlRegisterType<QGanttModelList>("Gantt", 1, 0, "GanttModelList");
 
-    QGanttModel m;
-    m.setItemDataFactoryFunction(&createModelData);
-    m.setContentWidth(20000);
+    QGanttModelList modelList;
 
-    for ( int i = 0; i < 20000; i = i + 100){
-        m.insertItem(i, 40);
+    for( int i = 0; i < 200; ++i ){
+        QGanttModel* m = new QGanttModel;
+        m->setItemDataFactoryFunction(&createModelData);
+        m->setContentWidth(20000);
+
+        for ( int i = 0; i < 20000; i = i + 100){
+            m->insertItem(i, 40);
+        }
+
+        modelList.appendModel(m);
     }
 
-
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("ganttModel", &m);
+    engine.rootContext()->setContextProperty("ganttModelList", &modelList);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
