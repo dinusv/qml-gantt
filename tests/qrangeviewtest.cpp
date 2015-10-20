@@ -189,9 +189,46 @@ void QRangeViewTest::modelItemLengthChangeTest(){
     delete view;
 }
 
+void QRangeViewTest::modelItemDataChangeTest(){
+    QRangeView* view = createView();
+
+    view->model()->setContentWidth(200);
+    for ( int i = 10; i < 200; i += 10 )
+        view->model()->insertItem(i, 10);
+
+    view->setViewportWidth(100);
+    view->setViewportX(0);
+
+    QCOMPARE(m_container->childItems().size(), 10);
+
+    view->setDataViaDelegate(m_container->childItems()[2], "modelData", "200");
+    QCOMPARE(getModelData(view, 30, 31, QGanttModel::modelData), QVariant("200"));
+    QCOMPARE(qmlContext(m_container->childItems()[2])->contextProperty("modelData"), QVariant("200"));
+
+    view->setDataViaDelegate(m_container->childItems()[1], "modelData", "3300");
+    QCOMPARE(getModelData(view, 20, 21, QGanttModel::modelData), QVariant("3300"));
+    QCOMPARE(qmlContext(m_container->childItems()[1])->contextProperty("modelData"), QVariant("3300"));
+
+    view->setDataViaDelegate(m_container->childItems()[9], "modelData", "100");
+    QCOMPARE(getModelData(view, 100, 101, QGanttModel::modelData), QVariant("100"));
+    QCOMPARE(qmlContext(m_container->childItems()[9])->contextProperty("modelData"), QVariant("100"));
+
+    delete view->model();
+    delete view;
+}
+
 QRangeView *QRangeViewTest::createView(){
     QRangeView* view = new QRangeView(m_container);
     view->setDelegate(m_viewDelegate);
     view->setModel(new QGanttModel);
     return view;
+}
+
+QVariant QRangeViewTest::getModelData(QRangeView* view, qint64 startPos, qint64 endPos, int role){
+    QAbstractRangeModelIterator* modelIt = view->model()->dataBetween(startPos, endPos);
+    if ( modelIt->isEnd() )
+        return QVariant();
+    QVariant value = modelIt->data(role);
+    delete modelIt;
+    return value;
 }

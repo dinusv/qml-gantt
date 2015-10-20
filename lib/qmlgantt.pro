@@ -2,7 +2,7 @@
 
 TEMPLATE = lib
 TARGET   = qmlgantt
-QT      += qml quick script
+QT      += qml quick
 CONFIG  += qt
 
 DEFINES += Q_GANTT
