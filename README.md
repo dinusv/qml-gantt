@@ -69,8 +69,14 @@ There are two ways to add custom data through the model:
 
 ### Adding a ```QGanntModel``` data item
 
-The `QGanttModel` class already provides all the methods required to communicate with the `RangeView` element.
-Its items are ordered in ascending order according to their position.  
+The `QGanttModel` class is an already implemented version of the ```QAbstractRangeModel``` class, therefore provides all the methods
+required to communicate with the ```RangeView``` element. It's child items contain 3 properites: the **position** and **length**, 
+which are used by the model to keep items sorted for easy access, and the **data** property, which is a variant type customizable by 
+the user. It can contain any qml value type, or a reference to a QObject subclass, which can further extend the number of properties 
+available. 
+
+In the associated sample subproject, I've included the ```QGanttData``` class, which adds a color and label property to each gantt item.
+
 
 ### Implementing the ```QAbstractRangeModel```
 
