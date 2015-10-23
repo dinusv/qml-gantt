@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
         int pos = 0, length = 0;
         while ( pos < CONFIGURATION_MODEL_SIZE - 320 ){
-            pos   += randBetween(20, 200);
+            pos   += randBetween(40, 300);
             length = randBetween(40, 120);
             m->insertItem(pos, length);
             pos   += length;

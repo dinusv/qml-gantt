@@ -32,6 +32,13 @@ ApplicationWindow {
                 onTriggered: Qt.quit();
             }
         }
+        Menu {
+            title: qsTr("Help")
+            MenuItem {
+                text: qsTr("Usage...")
+                onTriggered: ganttHelpWindow.show()
+            }
+        }
     }
 
     Rectangle{
@@ -178,8 +185,8 @@ ApplicationWindow {
                             height: 24
                             anchors.centerIn: parent
 
-                            viewportX: ganttView.contentX
-                            viewportWidth: ganttView.width
+                            viewportX: ganttView.contentX / ganttLine.zoomScale
+                            viewportWidth: ganttView.width / ganttLine.zoomScale
                             model: ganttModel
                             onEditItem: {
                                 ganttEditWindow.ganttItem = item
@@ -195,5 +202,8 @@ ApplicationWindow {
 
     GanttEditWindow{
         id: ganttEditWindow
+    }
+    GanttHelpWindow{
+        id: ganttHelpWindow
     }
 }

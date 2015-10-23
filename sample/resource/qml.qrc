@@ -3,5 +3,11 @@
         <file>main.qml</file>
         <file>GanttEditWindow.qml</file>
         <file>GanttLine.qml</file>
+        <file>GanttHelpWindow.qml</file>
+        <file>img/help-add-item.png</file>
+        <file>img/help-edit-item.png</file>
+        <file>img/help-edit-row.png</file>
+        <file>img/help-move-item.png</file>
+        <file>img/help-stretch-item.png</file>
     </qresource>
 </RCC>

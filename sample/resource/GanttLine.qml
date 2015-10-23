@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2015 Dinu SV.
@@ -32,11 +31,11 @@ Rectangle{
     property alias viewportX: rangeView.viewportX
     property alias viewportWidth: rangeView.viewportWidth
 
-    property color elementBorderColor: "#aaa"
+    property color elementBorderColor: "#ccc"
     property color elementBorderFocusColor: "#fff"
 
     color: "#ccc"
-    width: rangeView.width
+    width: rangeView.width * zoomScale
 
     RangeView {
         id: rangeView
@@ -252,6 +251,7 @@ Rectangle{
                 Text {
                     anchors.left: parent.left
                     anchors.leftMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
                     color: "#fff"
                     text: modelData.label
                     font.family: "sans-serif"
