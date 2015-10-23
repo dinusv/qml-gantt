@@ -82,7 +82,7 @@ Window{
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
-            color: createButtonArea.containsMouse ? "#334499" : "#334488"
+            color: createButtonArea.containsMouse ? "#334499" : "#334466"
             width: 100
             height: 30
             Text{
@@ -116,7 +116,7 @@ Window{
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
-            color: cancelButtonArea.containsMouse ? "#b14433" : "#aa4433"
+            color: cancelButtonArea.containsMouse ? "#b14433" : "#884433"
             width: 100
             height: 30
             Text{

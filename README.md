@@ -11,7 +11,7 @@ easily be implemented according to custom specifications.
  * **Library requirements**: Qt5 or higher
  * **Sample project requirements**: Qt5.3 or higher
 
-The sample associated provides an editable gantt chart element like below:
+A fully editable gantt chart element is provided in the associated sample project:
 
  ![Gantt sample screen shot](/doc/screen-gantt.jpg)
 
@@ -19,19 +19,25 @@ The sample associated provides an editable gantt chart element like below:
 
 The project can be used as an externally linked library or by including the source files directly. (The first option would be the preferred one).
 
-### Compiling and linking to the library
+### Compiling the library
 
  * Download the source code
  * Run the following command within the project directory to generate the library:
  
 ```
     cd build
-    qmake ..
+    qmake -r ..
     make (or nmake)
 ```
 
- * Run the sample file, or link to the library from other projects, and implement the model data:
- 
+ * The library will be available within the build directory. You can run the associated gantt example project from the sample directory:
+
+```
+	sample/./sample	
+```
+
+ * Or you can link to the library from your own project and implement the model data:
+
 ```
     INCLUDEPATH += $$GANTTLIBPATH/include
 	
@@ -59,10 +65,12 @@ The project can be used as an externally linked library or by including the sour
 There are two ways to add custom data through the model:
 
  * Adding a ```QGanntModel``` item (the easy way)
- * Implementing your own model by extending the ```QAbstractRangeModel``` (the harder or custom way)
+ * Implementing your own model by extending the ```QAbstractRangeModel``` (the custom way and also the bit more difficult one)
 
-### Adding a ```QGanntModel``` item
+### Adding a ```QGanntModel``` data item
 
+The `QGanttModel` class already provides all the methods required to communicate with the `RangeView` element.
+Its items are ordered in ascending order according to their position.  
 
 ### Implementing the ```QAbstractRangeModel```
 

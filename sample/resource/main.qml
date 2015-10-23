@@ -161,7 +161,7 @@ ApplicationWindow {
                 id: ganttView
 
                 height: parent.height
-                contentWidth:  20000
+                contentWidth:  ganttModelList.contentWidth
                 model: ganttModelList
                 delegate: Rectangle{
                     height: 40

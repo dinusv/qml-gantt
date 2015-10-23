@@ -24,9 +24,16 @@
 #include "qganttmodellist.h"
 #include "qganttdata.h"
 
+static int CONFIGURATION_MODEL_SIZE = 20000;
+
+int randBetween(int min, int max){
+    return rand() % (max - min + 1) + min;
+}
+
 QVariant createModelData(){
     return QVariant::fromValue(new QGanttData);
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -40,15 +47,19 @@ int main(int argc, char *argv[])
     qmlRegisterType<QGanttData>(     "Gantt", 1, 0, "GanttData");
     qmlRegisterType<QGanttModelList>("Gantt", 1, 0, "GanttModelList");
 
-    QGanttModelList modelList;
+    QGanttModelList modelList(CONFIGURATION_MODEL_SIZE);
 
-    for( int i = 0; i < 200; ++i ){
+    for( int i = 0; i < 100; ++i ){
         QGanttModel* m = new QGanttModel;
         m->setItemDataFactoryFunction(&createModelData);
-        m->setContentWidth(20000);
+        m->setContentWidth(CONFIGURATION_MODEL_SIZE);
 
-        for ( int i = 0; i < 20000; i = i + 100){
-            m->insertItem(i, 40);
+        int pos = 0, length = 0;
+        while ( pos < CONFIGURATION_MODEL_SIZE - 320 ){
+            pos   += randBetween(20, 200);
+            length = randBetween(40, 120);
+            m->insertItem(pos, length);
+            pos   += length;
         }
 
         modelList.appendModel(m);

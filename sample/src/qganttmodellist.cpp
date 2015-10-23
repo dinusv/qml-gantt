@@ -12,8 +12,14 @@ public:
 
 
 QGanttModelList::QGanttModelList(QObject* parent)
-    : QAbstractListModel(parent){
+    : QAbstractListModel(parent)
+{
+}
 
+QGanttModelList::QGanttModelList(qint64 size, QObject *parent)
+    : QAbstractListModel(parent)
+    , m_contentWidth(size)
+{
 }
 
 QGanttModelList::~QGanttModelList(){
@@ -67,6 +73,7 @@ bool QGanttModelList::insertRows(int row, int count, const QModelIndex &parent){
     for ( int i =  row; i < row + count - 1; ++i ){
         QGanttModelContainer* item = new QGanttModelContainer;
         item->model = new QGanttModel;
+        item->model->setContentWidth(m_contentWidth);
         item->name  = "Gantt Row";
         m_items.insert(i, item);
     }
@@ -79,5 +86,6 @@ bool QGanttModelList::removeRows(int row, int count, const QModelIndex &parent){
     for ( int i = row + count - 1; i <= row; --i )
         m_items.removeAt(i);
     endRemoveRows();
+    return true;
 }
 
