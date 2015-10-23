@@ -13,7 +13,7 @@ easily be implemented according to custom specifications.
 
 A fully editable gantt chart element is provided in the associated sample project:
 
- ![Gantt sample screen shot](/doc/screen-gantt.jpg)
+ ![Gantt sample screen shot](/doc/screen-gantt.png)
 
 ## Usage
 
