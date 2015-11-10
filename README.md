@@ -76,7 +76,78 @@ the user. It can contain any qml value type, or a reference to a QObject subclas
 available. 
 
 In the associated sample subproject, I've included the ```QGanttData``` class, which adds a color and label property to each gantt item.
+The ```QGanttModel``` class is assigned a ```QGanttData``` object whenever a new ```QGanttModelItem``` is created and inserted in the model. This
+is done internally by the model by calling a *configured* data factory function whenever an insertion is triggered. The function is configured
+by using the ```QGanttModelItem::setItemDataFactoryFunction``` setter. The factory function is defined in the *sample/src/main.cpp* file.
 
+To assign a different data item:
+
+```
+class CustomData : public QObject{
+
+    Q_OBJECT
+    Q_PROPERTY(QString property1...)
+    ...
+
+}
+```
+
+we register the type to qml:
+
+```
+qmlRegisterType<CustomData>("Gantt", 1, 0, "CustomData");
+```
+
+
+then define the item factory function:
+
+```
+QVariant createModelData(){
+    return QVariant::fromValue(new CustomData);
+}
+```
+
+and register the function to our model:
+
+```
+QGanttModel* model = new QanttModel;
+model->setItemDataFactoryFunction(&createModelData);
+```
+
+then, whenever we invoke a new insertion, a ```CustomData``` type object will be set in the data field:
+
+```
+model->insertItem(10, 10);
+```
+
+Which, in our delegate, can be accessed through the ```modelData``` property:
+
+```
+RangeView{
+    ...
+    delegate: Component{
+        Text{ text: modelData.property1 }
+    }
+} 
+```
+
+The properties are set through simple assignments:
+
+```
+RangeView{
+    ...
+    delegate: Component{
+        Rectangle{
+            width: 200; height: 40;
+            Text{ text: modelData.property1 }
+            MouseArea{ anchors.fill: parent; onClicked: modelData.property1 = "new value"; }
+        }
+    }
+} 
+```
+
+
+The *sample/resource/GanttLine.qml* file provides a full example on assignments and other item handling.
 
 ### Implementing the ```QAbstractRangeModel```
 
