@@ -108,7 +108,7 @@ void QRangeViewTest::edgeLookupTest(){
     view->model()->insertItem(20, 10);
     QCOMPARE(m_container->childItems().size(), 5);
 
-    // keep items, due to the first segment (5, 40) that covers the rest
+    // keep all items, due to the first segment (5, 40) that covers the rest
     view->setViewportX(40);
     QCOMPARE(m_container->childItems().size(), 5);
 
