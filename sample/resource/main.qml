@@ -168,7 +168,7 @@ ApplicationWindow {
                 id: ganttView
 
                 height: parent.height
-                contentWidth:  ganttModelList.contentWidth
+                contentWidth: ganttModelList.contentWidth
                 model: ganttModelList
                 delegate: Rectangle{
                     height: 40
@@ -184,7 +184,6 @@ ApplicationWindow {
                             color: "#ccc"
                             height: 24
                             anchors.centerIn: parent
-
                             viewportX: ganttView.contentX / ganttLine.zoomScale
                             viewportWidth: ganttView.width / ganttLine.zoomScale
                             model: ganttModel

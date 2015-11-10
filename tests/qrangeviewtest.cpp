@@ -88,6 +88,34 @@ void QRangeViewTest::lookupTest(){
     delete view;
 }
 
+void QRangeViewTest::edgeLookupTest(){
+    QRangeView* view = createView();
+
+    view->model()->setContentWidth(200);
+    view->setViewportWidth(100);
+
+    view->model()->insertItem(10, 30);
+    view->model()->insertItem(5, 40);
+    view->model()->insertItem(10, 40);
+
+    view->setViewportX(60);
+    QCOMPARE(m_container->childItems().size(), 1);
+    view->setViewportX(45);
+    QCOMPARE(m_container->childItems().size(), 2);
+    view->setViewportX(0);
+    QCOMPARE(m_container->childItems().size(), 4);
+
+    view->model()->insertItem(20, 10);
+    QCOMPARE(m_container->childItems().size(), 5);
+
+    // keep items, due to the first segment (5, 40) that covers the rest
+    view->setViewportX(40);
+    QCOMPARE(m_container->childItems().size(), 5);
+
+    delete view->model();
+    delete view;
+}
+
 void QRangeViewTest::modelItemChangeTest(){
     QRangeView* view = createView();
 

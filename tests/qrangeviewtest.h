@@ -38,6 +38,7 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
     void lookupTest();
+    void edgeLookupTest();
     void modelItemChangeTest();
     void modelItemPositionChangeTest();
     void modelItemLengthChangeTest();

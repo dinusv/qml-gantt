@@ -18,6 +18,8 @@
 #include "qabstractrangemodel.h"
 #include <QQmlContext>
 
+#include <QDebug>
+
 // QRangeViewItem
 // ----------------------------------------------------------------------------
 
@@ -434,8 +436,11 @@ void QRangeView::regenerateNewContent(){
 
             qint64 position = modelIt->data(QAbstractRangeModel::PositionRole).toLongLong();
             qint64 length   = modelIt->data(QAbstractRangeModel::LengthRole).toLongLong();
-            if ( position + length > d->lastViewportX )
-                break;
+            if ( position + length > d->lastViewportX && d->items.size() > 0 ){
+                if ( d->items.first()->position < position ||
+                     ( d->items.first()->position == position && d->items.first()->length < length ) )
+                        break;
+            }
 
             QRangeViewItem* viewItem = new QRangeViewItem;
             viewItem->position = position;
@@ -553,7 +558,10 @@ void QRangeView::setModel(QAbstractRangeModel* arg){
     if (d->model)
         disconnect(d->model, 0, this, 0);
 
-    d->model      = arg;
+    d->model = arg;
+    if ( d->model == 0 )
+        return;
+
     d->modelRoles = d->model->roleNames();
     setImplicitWidth(d->model->contentWidth());
 
