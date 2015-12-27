@@ -94,14 +94,14 @@ class CustomData : public QObject{
 
 we register the type to qml:
 
-```
+```cpp
 qmlRegisterType<CustomData>("Gantt", 1, 0, "CustomData");
 ```
 
 
 then define the item factory function:
 
-```
+```cpp
 QVariant createModelData(){
     return QVariant::fromValue(new CustomData);
 }
@@ -109,20 +109,20 @@ QVariant createModelData(){
 
 and register the function to our model:
 
-```
+```cpp
 QGanttModel* model = new QanttModel;
 model->setItemDataFactoryFunction(&createModelData);
 ```
 
 then, whenever we invoke a new insertion, a ```CustomData``` type object will be set in the data field:
 
-```
+```cpp
 model->insertItem(10, 10);
 ```
 
 Which, in our delegate, can be accessed through the ```modelData``` property:
 
-```
+```qml
 RangeView{
     ...
     delegate: Component{
@@ -133,7 +133,7 @@ RangeView{
 
 The properties are set through simple assignments:
 
-```
+```qml
 RangeView{
     ...
     delegate: Component{
@@ -151,12 +151,6 @@ The *sample/resource/GanttLine.qml* file provides a full example on assignments 
 
 ### Implementing the ```QAbstractRangeModel```
 
-The ```QAbstractRangeModel``` and ```QAbstractRangeModelIterator``` provide the implementation requirements
-used by the ```QRangeView``` to work with the model data. 
-
-The ```QRangeView``` does not need to know the number of items contained within the model. The indexes are also
-not required, therefore items within the model can be stored in linked-lists, trees or other container types.
-
-The view accesses items only through their positions, so it is important for the view to know the total content
-length of the model. This is given by the ```contentLength()``` method. Changes in the model are notified by 
-item positions. 
+The  QAbstractRangeModel  and  QAbstractRangeModelIterator  provide the implementation 
+requirements used by the  QRangeView  to work with the model data. The section is treated separately 
+[here](doc/implement-qabstractrangemodel.md).
