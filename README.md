@@ -1,6 +1,7 @@
 # QML Gantt library
 
-[![Build Status](https://travis-ci.org/dinusv/qml-gantt.svg?branch=master)](https://travis-ci.org/dinusv/qml-gantt)
+[![Build Status](https://travis-ci.org/dinusv/qml-gantt.svg?branch=master)](https://travis-ci.org/dinusv/qml-gantt) [![Build status](https://ci.appveyor.com/api/projects/status/dmstdr0ukobutitm/branch/master?svg=true)](https://ci.appveyor.com/project/dinusv/qml-gantt/branch/master)
+
 
 An efficient implementation of a gantt chart library for qml. The library provides a custom View element
 which handles lazy loading of items according to its viewport. Items are loaded from a model which can 
