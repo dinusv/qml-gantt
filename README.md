@@ -82,7 +82,7 @@ by using the ```QGanttModelItem::setItemDataFactoryFunction``` setter. The facto
 
 To assign a different data item:
 
-```
+```cpp
 class CustomData : public QObject{
 
     Q_OBJECT
