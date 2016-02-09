@@ -19,6 +19,10 @@
 
 #include <qglobal.h>
 
+#define QML_GANTT_VERSION_MAJOR 0
+#define QML_GANTT_VERSION_MINOR 1
+#define QML_GANTT_VERSION_PATCH 0
+
 #ifndef Q_GANTT_STATIC
 #  ifdef Q_GANTT_LIB
 #    define Q_GANTT_EXPORT Q_DECL_EXPORT
