@@ -112,22 +112,56 @@ To make the model **writable**, an extra set of methods requires implementation:
  
  * the ```setItemPosition()``` function is called when the view requests an item to change its position. The item is 
  searched for within the model, assigned a new position, then the view is notified through the 
- itemCoordinatesChanged() signal:
+ ```itemCoordinatesChanged()``` signal:
  
+```cpp
+void CustomModel::setItemPosition(qint64 itemPosition, qint64 itemLength, int indexOffset, qint64 itemNewPosition){
+    ItemIterator itemIt = findItem(itemPosition, itemLength, indexOffset);
+    itemIt->position = itemNewPosition;
+
+    // update our container to have it sorted, here we simply place the item to its new index
+    itemIt = sortItem(itemIt);
+
+    CustomModelIterator* modelIt = new CustomModelIterator(itemIt, itemIt + 1);
+
+    // I have considered sortItem to always position the item in front of items with the same position and length,
+    // making its relativeIndex = 0
+    int newRelativeIndex = 0;
+    emit ItemCoordinatesChanged(itemPosition, itemLength, indexOffset, modelIt, newRelativeIndex);
+}
 ```
 
-```
+ * ```setItemLength()``` behaves the same as ```setItemPosition()```
 
- * setItemLength() behaves the same as setItemPosition()
+```cpp
+void CustomModel::setItemLength(qint64 itemPosition, qint64 itemLength, int indexOffset, qint64 itemNewLength){
+    ItemIterator itemIt = findItem(itemPosition, itemLength, indexOffset);
+    itemIt->length = itemNewLength;
+    itemIt = sortItem(itemIt);
+    CustomModelIterator* modelIt = new CustomModelIterator(itemIt, itemIt + 1);
 
-```
-
+    int newRelativeIndex = 0;
+    emit ItemCoordinatesChanged(itemPosition, itemLength, indexOffset, modelIt, newRelativeIndex);
+}
 ```
   
- * setItemData() sets custom data to the model from the given role names
+ * ```setItemData()``` sets custom data to the model from the given role names
 
 ```
-
+void CustomModel::setItemData(
+    qint64 itemPosition,
+    qint64 itemLength,
+    int indexOffset,
+    int role,
+    const QVariant& value)
+{
+    ItemIterator itemIt = findItem(itemPosition, itemLength, indexOffset);
+    if ( role == CustomModel::ModelData ){
+        CustomModelIterator* modelIt = new CustomModelIterator(itemIt, itemIt + 1);
+        itemIt->setData(value.toString());
+        emit itemsDataChanged(modelIt, indexOffset, QList<int>() << CustomModel::ModelData)
+    }
+}
 ```
  
  * ```insertItem(position, length)``` - inserts an item in the model at the specified position and length. 
@@ -147,10 +181,10 @@ void CustomModel::insertItem(qint64 position, qint64 length){
 
 ```
 void CustomModel::removeItem(qint64 position, qint64 length, qint64 relativeIndex){
-	CustomModelItem* item = findItem(position, length, relativeIndex);
-	if (item){
+    ItemIterator itemIt = findItem(position, length, relativeIndex);
+    if (itemIt != NULL){
 		beginDataChange(position, position + length);
-		removeItem(item);
+        removeItem(itemIt);
 		endDataChange();
 	}
 }
@@ -170,4 +204,4 @@ void CustomModel::resetModel(){
 
 ## Example
 
-The default ```QGanttModel``` provided in the library is an implementation of a QAbstractRangeModel.
+The default ```QGanttModel``` provided in the library is an implementation of a ```QAbstractRangeModel```.
