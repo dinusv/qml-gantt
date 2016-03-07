@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 Dinu SV.
+** Copyright (C) 2015-2016 Dinu SV.
 ** (contact: mail@dinusv.com)
 ** This file is part of QML Gantt library.
 **

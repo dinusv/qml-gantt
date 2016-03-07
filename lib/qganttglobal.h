@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 Dinu SV.
+** Copyright (C) 2015-2016 Dinu SV.
 ** (contact: mail@dinusv.com)
 ** This file is part of QML Gantt library.
 **
@@ -18,6 +18,10 @@
 #define QGANTTGLOBAL_H
 
 #include <qglobal.h>
+
+#define QML_GANTT_VERSION_MAJOR 0
+#define QML_GANTT_VERSION_MINOR 1
+#define QML_GANTT_VERSION_PATCH 0
 
 #ifndef Q_GANTT_STATIC
 #  ifdef Q_GANTT_LIB
