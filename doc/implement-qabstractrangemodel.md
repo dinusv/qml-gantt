@@ -41,30 +41,30 @@ CustomModel::CustomModel(QObject* parent = 0)
    accessing data as the QAbstractItemModel:
 
 ```cpp
-    // in our header file, we define the Role enum
+// in our header file, we define the Role enum
 
-    class CustomModel : public QAbstractRangeModel{
-    // ...
-    public:
-        // custom roles are next in line after the position and length role
+class CustomModel : public QAbstractRangeModel{
+// ...
+public:
+// custom roles are next in line after the position and length role
 
-        enum Role{
-            modelData = QAbstractRangeModel::LengthRole + 1
-        };
-    // ...
-    QHash<int, QByteArray> roleNames() const;
-    // ...
-    }
+enum Role{
+    modelData = QAbstractRangeModel::LengthRole + 1
+};
+// ...
+QHash<int, QByteArray> roleNames() const;
+// ...
+}
 ```
 
 ```cpp
-    // Then we map our enum to property names
+// Then we map our enum to property names
 
-    QHash<int, QByteArray> CustomModel::roleNames() const{
-        QHash<int, QByteArray> roles;
-        roles[QGanttModel::ModelData] = "modelData";
-        return roles;
-    }
+QHash<int, QByteArray> CustomModel::roleNames() const{
+    QHash<int, QByteArray> roles;
+    roles[QGanttModel::ModelData] = "modelData";
+    return roles;
+}
 ```
   
  * ```dataBetween(startPosition, endPosition)``` - returns an iterable set of items to display between startPosition and endPosition
@@ -76,15 +76,14 @@ CustomModel::CustomModel(QObject* parent = 0)
 QAbstractRangeModelIterator* CustomModel::dataBetween(qint64 startPosition, qint64 endPosition){
     // ItemIterator is used as an example, and will be used only internally by the CustomModelIterator to iterate items. This can be
     // an iterator for any container type defined by the user.
-
     ItemIterator start = itemIteratorFromPosition(startPosition);
     ItemIterator end   = itemIteratorFromPosition(endPosition);
     return new CustomModelIterator(start, end);
 }
 ```
 
-Where a ```CustomModelIterator``` implements ```isEnd()```, ```nextItem()``` and ```data(int role)``` from
-```QAbstractRangeModelIterator```:
+Where a ```CustomModelIterator``` implements ```isEnd()```, ```nextItem()``` and ```data(int role)``` from 
+```QAbstractRangeModelIterator``` :
 
 ```cpp
 class CustomModelIterator : public QAbstractRangeModelIterator{
