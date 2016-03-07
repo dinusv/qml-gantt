@@ -147,7 +147,7 @@ void CustomModel::setItemLength(qint64 itemPosition, qint64 itemLength, int inde
   
  * ```setItemData()``` sets custom data to the model from the given role names
 
-```
+```cpp
 void CustomModel::setItemData(
     qint64 itemPosition,
     qint64 itemLength,
@@ -168,7 +168,7 @@ void CustomModel::setItemData(
    The view is notified by calling ```beginDataChange(startPosition, endPosition)``` and 
    ```endDataChange()``` methods:
  
-```
+```cpp
 void CustomModel::insertItem(qint64 position, qint64 length){
 	beginDataChange(position, position + length);
 	insertItem(new CustomModelItem(position, length));
@@ -179,7 +179,7 @@ void CustomModel::insertItem(qint64 position, qint64 length){
  * removeItem(position, length, relativeIndex) - remove the item at the specified coordinates. The view is notified
  through the same 2 methods as the insertion:
 
-```
+```cpp
 void CustomModel::removeItem(qint64 position, qint64 length, qint64 relativeIndex){
     ItemIterator itemIt = findItem(position, length, relativeIndex);
     if (itemIt != NULL){
@@ -192,9 +192,9 @@ void CustomModel::removeItem(qint64 position, qint64 length, qint64 relativeInde
   
   * The ```beginDataChange(startPosition, endPosition)``` and ```endDataChange()``` are used whenever the 
     model wants to notify the view over a set of items that have changed between those positions. Changes 
-	to the whole model can be notified by signalling a change between 0 and the contentWidth of the model:
+	to the whole model can be notified by signalling a change between 0 and the ```contentWidth``` of the model:
   
-```
+```cpp
 void CustomModel::resetModel(){
 	beginDataChange(0, contentWidth());
 	clearData();
