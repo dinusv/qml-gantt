@@ -56,7 +56,7 @@ ApplicationWindow {
 
             model: ganttModelList
             delegate: Rectangle{
-                width: parent.width
+                width: ganttNameView.width
                 height: 40
                 Rectangle{
                     color: "#ccc"
