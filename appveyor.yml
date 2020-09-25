@@ -1,5 +1,11 @@
+os: unstable
+image: Visual Studio 2017
+
+platform:
+  - x64
+  
 install:
-  - set QTDIR=C:\Qt\5.5\mingw492_32
+  - SET QTDIR=C:\Qt\5.13.2\msvc2017_64
   - set PATH=%PATH%;%QTDIR%\bin;C:\MinGW\bin
 build_script:
   - qmake -r qmlgantt.pro
